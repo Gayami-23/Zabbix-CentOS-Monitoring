@@ -1,0 +1,13 @@
+# SNMP Community String Configuration
+# Member 1 IP: 192.168.8.103
+com2sec notConfigUser  default       public
+group   notConfigGroup v1           notConfigUser
+group   notConfigGroup v2c          notConfigUser
+
+This file details how your server "talks" to the rest of the network.
+
+What it does: It configures the Simple Network Management Protocol (SNMP).
+
+Technical Detail: You mapped the notConfigUser to the public community string.
+
+The Logic: In professional networking, a "Community String" acts as a shared secret. By setting this to public, you enabled Jaye's monitoring station to "poll" (ask for) your CPU and RAM statistics without needing a complex login every few seconds.

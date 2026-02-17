@@ -1,0 +1,11 @@
+success
+public (active)
+ports: 10050/tcp
+
+This status tells you if your security "shield" is active and which "doors" (ports) are open.
+
+Success/Active: This confirms that the firewall is running and protecting the CentOS server.
+
+Ports (10050/tcp): This status confirms that you have successfully created a dedicated path for the Zabbix monitoring data.
+
+Permanent: This is a critical status indicating the rules will survive a server reboot, ensuring long-term security.

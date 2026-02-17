@@ -1,0 +1,7 @@
+stress: info: [39105] successful run completed in 121s
+
+What it does: It records the successful execution of a resource exhaustion test.
+
+Technical Detail: You ran a high-intensity simulation that lasted 121 seconds.
+
+The Logic: A monitor is useless if it doesn't alert you when things go wrong. By running the stress command, you intentionally pushed your CentOS server into a "Critical" state. This proved that the Trigger Jaye set (for when memory is < 2GB) actually works in a real-world crisis.
