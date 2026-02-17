@@ -1,136 +1,331 @@
+#### Zabbix Enterprise Monitoring Infrastructure
 
+##### 📋 Project Overview
 
-**Zabbix Enterprise Monitoring Project-Jayamini's Part**
----
+A comprehensive enterprise monitoring solution implementing real-time telemetry, security hardening, and performance validation across hybrid Linux environments. This project demonstrates practical expertise in infrastructure monitoring, network security, and system administration.
 
 
 
-**Project Objective**
+##### 🎯 Technical Objectives
 
+Establish secure, real-time monitoring between Zabbix Server (Ubuntu 22.04 LTS) and Client Host (CentOS Stream 10)
 
 
-* To establish a secure, real-time monitoring link between a Zabbix Management Server (Ubuntu) and a remote Client Host (CentOS) while resolving common network and synchronization issues.
 
+Implement firewall hardening with least-privilege principles
 
 
-**Technical Implementation \& Troubleshooting**
 
+Configure multi-protocol monitoring (Zabbix Agent 7.0 \& SNMP v2c)
 
 
-1. Connection Establishment (The "Red Box" Fix)
 
-          Issue: The Zabbix Dashboard showed a red ZBX availability icon, indicating the server could not reach the agent.
+Validate monitoring efficacy through stress testing
 
- 	  Root Cause: The CentOS firewall was blocking inbound traffic on port 10050.
 
-          Resolution: Gayami configured the firewall rules:  sudo firewall-cmd --permanent --add-port=10050/tcp
 
-                                                             sudo firewall-cmd --reload
+Resolve time synchronization and connectivity challenges
 
- 	  Result: The ZBX icon turned Green.
+##### 
 
+##### 🏗️ Architecture
 
+Environment Specifications
 
-2\. Time Synchronization (The "Orange Box" Fix)
+Role	Operating System	IP Address	Services
 
-         Issue: A warning appeared stating "System time is out of sync (diff > 60s)".
+Zabbix Server	Ubuntu 22.04 LTS	192.168.8.188	Zabbix Server 7.0, MySQL, Apache
 
-         Root Cause: The clock on the CentOS agent did not match the Ubuntu server, causing data timestamp errors.
+Zabbix Agent	CentOS Stream 10	192.168.8.103	Zabbix Agent 7.0, SNMPd, Chronyd
 
-         Resolution: We utilized the chrony daemon to force a manual synchronization:  sudo systemctl start chronyd
+##### 🔧 Technical Implementation
 
-                                                                                       sudo chronyc -a makestep
+Phase 1: Connectivity Resolution ("The Red Box Fix")
 
-         Result: The orange warning cleared, and status changed to RESOLVED.
+Challenge: Zabbix dashboard displayed red ZBX availability indicator
 
 
 
-3\. Performance Monitoring
+Root Cause: CentOS firewall blocking inbound Zabbix Agent port (10050/TCP)
 
-        Metrics Captured:
 
-               CPU Load: Monitored via system.cpu.load.
 
-               Network Traffic: Real-time analysis of eth0 incoming/outgoing packets.
+Resolution:
 
-               Stress Testing: We validated the triggers by running the stress tool on the CentOS machine to visualize CPU spikes on my dashboard.
 
 
+bash
 
-4\. Problem Identification
+sudo firewall-cmd --permanent --add-port=10050/tcp
 
-       When we first connected the CentOS agent, the dashboard flagged a Warning (Orange/Red status).
+sudo firewall-cmd --reload
 
-       The Problem: The system time on the agent was more than 60 seconds different from the server, which would cause errors in our data graphs.
+sudo firewall-cmd --list-all  # Verification
 
+Outcome: Successful server-agent communication established
 
 
 
+Phase 2: Time Synchronization ("The Orange Box Fix")
 
-5\. Environment Details
+Challenge: System time drift warning (>60s discrepancy)
 
-|Role|Operating System|IP Address|
-|-|-|-|
-|Zabbix Server|Ubuntu 22.04 LTS (Jayamini)|192.168.8.188|
-|Zabbix Agent|CentOS 7/8 (Gayami)|192.168.8.103|
 
 
+Root Cause: Clock misalignment between Ubuntu server and CentOS agent
 
 
 
-**Server Administration \& Security Hardening-Gayami's Part** 
----
+Resolution:
 
 
-🛠️ **Role Overview**
 
-As the Server Administrator for this project, my primary responsibility was to deploy, secure, and configure the managed CentOS 10 Stream host. I ensured the server was reachable over a bridged network while maintaining a strict security posture through firewall orchestration.
+bash
 
+sudo systemctl start chronyd
 
-🔐 **Security Hardening (Firewall Configuration)**
+sudo chronyc -a makestep
 
-To protect the infrastructure, I implemented a "Least Privilege" firewall policy. This ensured that only the specific communication channels required for monitoring were accessible.
+sudo chronyc tracking  # Verification
 
-Protocol Access: Successfully opened Port 10050/TCP to allow the Zabbix Server to communicate with the local agent.
+Outcome: Timestamp accuracy restored; warning status resolved
 
-Persistence: Configured the rules as --permanent and reloaded the firewalld service to ensure security remains active after a reboot.
 
-Verification: Confirmed the status using sudo firewall-cmd --list-all, ensuring the "public" zone only exposed necessary services.
 
+Phase 3: Security Hardening \& Monitoring Deployment
 
-📡 **Monitoring Protocol Deployment**
+Firewall Orchestration (Least Privilege Model)
 
-I established the data bridge between the host and the dashboard using two industrial-standard methods:
+Implemented strict access control with permanent rules
 
-SNMP v2c Configuration: Modified the snmpd.conf file to set a standardized "public" community string. This allows universal hardware monitoring.
 
-Zabbix Agent 7.0: Installed and optimized the Zabbix Agent to stream live telemetry (CPU, RAM, and Disk I/O) to the monitoring station.
 
-Network Identity: Configured the host with a static-mapped IP of 192.168.8.103 for consistent tracking.
+Verified zone configurations and service exposure
 
 
-🧪 **Performance Validation (Stress Testing)**
 
-To provide empirical proof that the system works, I conducted a Resource Exhaustion Simulation.
+Automation Script: firewall\_rules.sh
 
-The Test: Used the stress utility to intentionally push the CPU and RAM to their limits.
 
-The Result: The test ran for 121 seconds, successfully overwhelming the system resources.
 
-Success Metric: This test provided the "V-Spike" data that Jaye's dashboard captured, proving our alerting logic works under heavy industrial load.
+Monitoring Protocol Configuration
 
+Zabbix Agent 7.0
 
-📁 **File Inventory**
 
-My contribution includes the following technical assets:
 
-firewall\_rules.sh: Automation script for security hardening.
+Configured for real-time telemetry streaming
 
-snmpd\_snippet.conf: Verified SNMP configuration.
 
-stress\_test\_proof.txt: Raw terminal log of the performance validation.
 
-system\_status.log: Proof of active monitoring services (Zabbix Agent \& SNMPD).
+Metrics: CPU load, memory utilization, disk I/O, network traffic
 
 
+
+SNMP v2c Implementation
+
+
+
+Configured community string for universal hardware monitoring
+
+
+
+Verified through snmpd\_snippet.conf
+
+
+
+Phase 4: Performance Validation \& Stress Testing
+
+Resource Exhaustion Simulation
+
+Tool: stress utility on CentOS agent
+
+
+
+Duration: 121 seconds of sustained CPU/RAM load
+
+
+
+Result: Successfully triggered monitoring alerts
+
+
+
+Evidence: stress\_test\_proof.txt
+
+
+
+Visualization: Dashboard captured CPU "V-Spike" patterns
+
+
+
+Monitored Metrics
+
+system.cpu.load - CPU utilization tracking
+
+
+
+eth0 traffic analysis - Real-time packet monitoring
+
+
+
+System time accuracy - Continuous validation
+
+
+
+##### 📊 Problem Resolution Summary
+
+Issue	Detection Method	Resolution	Status
+
+Firewall blocking port 10050	Red ZBX icon	Firewall-cmd rules	✅ RESOLVED
+
+Time synchronization >60s	Orange warning	Chronyd forced sync	✅ RESOLVED
+
+CPU spike validation	Stress test	Alert trigger confirmed	✅ VALIDATED
+
+##### 🛡️ Security Hardening Measures
+
+Firewall Configuration
+
+
+
+Least-privilege access policy
+
+
+
+Permanent rule implementation
+
+
+
+Zone-based security enforcement
+
+
+
+Service Hardening
+
+
+
+SNMP community string standardization
+
+
+
+Zabbix agent secure configuration
+
+
+
+Service status verification: system\_status.log
+
+##### 
+
+##### 📁 Project Assets
+
+Configuration Files
+
+firewall\_rules.sh - Automated security hardening script
+
+
+
+snmpd\_snippet.conf - Validated SNMP configuration
+
+
+
+stress\_test\_proof.txt - Performance validation evidence
+
+
+
+system\_status.log - Active services verification
+
+
+
+##### 👥 Contributors
+
+Jayamini Dissanayake- Zabbix Server Administrator
+
+
+
+www.linkedin.com/in/jayamini-dissanayake-6806812b6
+
+
+
+Zabbix Server deployment \& configuration
+
+
+
+Dashboard implementation \& visualization
+
+
+
+Time synchronization troubleshooting
+
+
+
+Performance monitoring \& metric analysis
+
+
+
+Gayami Jayawardane - Security \& Systems Administrator
+
+
+www.linkedin.com/in/gayami-jayawardane-b3b63935b
+
+
+
+CentOS host configuration \& hardening
+
+
+
+Firewall orchestration \& security implementation
+
+
+
+Zabbix Agent \& SNMP protocol deployment
+
+
+
+Stress testing \& performance validation
+
+
+
+##### 🚀 Key Achievements
+
+Successfully established secure monitoring bridge across heterogeneous Linux environments
+
+
+
+Implemented enterprise-grade security hardening with least-privilege model
+
+
+
+Validated monitoring efficacy through controlled stress testing
+
+
+
+Achieved 100% resolution of connectivity and synchronization issues
+
+
+
+Created reusable automation scripts for firewall configuration
+
+
+
+##### 📈 Future Enhancements
+
+Implement automated alerting via email/SMS
+
+
+
+Deploy Grafana for advanced visualization
+
+
+
+Expand monitoring to containerized environments
+
+
+
+Integrate with centralized logging solution (ELK stack)
+
+
+
+##### 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
