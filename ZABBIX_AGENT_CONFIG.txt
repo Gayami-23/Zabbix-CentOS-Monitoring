@@ -1,0 +1,45 @@
+# ==========================================================
+# ZABBIX AGENT CONFIGURATION BACKUP
+# Project: Ubuntu-CentOS Monitoring Link
+# Members: Jayamini & Gayami
+# ==========================================================
+
+1. CONNECTION SETTINGS
+	Passive Check: Jayamini's Server requests data from gayami
+	Server=192.168.8.100
+
+	Active Check: Gayami's Agent pushes data to Jayamini
+	ServerActive=192.168.8.100
+
+	The name of the host as it appears in the Zabbix Web UI
+	Hostname=centOS-gayami-server
+
+2. NETWORK PARAMETERS
+	The port the agent listens on for incoming connections
+	ListenPort=10050
+
+	Interface for the agent to listen on (0.0.0.0 = all interfaces)
+	ListenIP=0.0.0.0
+
+3. PERFORMANCE & TIMEOUTS
+	How long the agent waits for a response (seconds)
+	Increased to 3s to prevent gaps in graphs during lag
+	Timeout=3
+
+	The size of the local buffer for active checks
+	BufferSend=5
+	BufferSize=100
+
+4. LOGGING & DEBUGGING
+	Location of the log file for troubleshooting "Red Boxes"
+	LogFile=/var/log/zabbix/zabbix_agentd.log
+
+	Log rotation: Keeps file size small (MB)
+	LogFileSize=1
+
+	Debug Level: 3 = Information (Standard)
+	DebugLevel=3
+
+5. SECURITY & FIREWALL
+	Port 10050 must be open on CentOS (Gayami's side)
+	Port 10051 must be open on Ubuntu (Jayamini's side) if using Active checks
